@@ -1,0 +1,125 @@
+/* Dark background for the entire sidebar */
+.sidebar {
+  width: 300px;
+  background-color: #2c2c2c; /* Dark background color */
+  color: #ffffff; /* Light text color */
+  height:1000px;
+}
+
+/* Image styling for the sidebar */
+.sidebar-image {
+  width: 50%; /* Makes the image full-width of the sidebar */
+  height: auto; /* Maintains aspect ratio */
+  display: block; /* Ensures the image is displayed as a block element */
+}
+
+
+.module-header {
+  font-weight: bold;
+  cursor: pointer;
+  color: #ffffff; /* White text for contrast */
+  font-size: 20px; /* Increased font size */
+  background: #444444; /* Darker background for better contrast */
+  padding: 15px; /* Add padding for better spacing */
+  margin-bottom: 30px; /* Increased margin to add more space between module headers */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+.module-header:hover {
+  background-color: #555555; /* Slightly lighter on hover */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+/* Optional: If you need extra space around each module */
+.module {
+  margin-top: 80px; /* Add more space around each module */
+}
+
+.module-content {
+  padding-left: 10px;
+  color: #dddddd; /* Slightly lighter text for readability */
+}
+
+.sub-module-header {
+  margin-top: 10px;
+  color: #ffffff; /* Ensure sub-headers are white for contrast */
+}
+
+.checkbox {
+  margin-bottom: 10px;
+  color: #ffffff; /* Checkbox text color */
+}
+
+.popup {
+  position: absolute;
+  top: 16%;
+  right: 15px;
+  width: 300px;
+  height: 480px;
+  background-color: slategray; /* Darker background for the popup */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+  z-index: 1000;
+  color: #ffffff; /* Light text color */
+}
+
+.popup3 {
+  position: absolute;
+  top: 16%;
+  right: 15px;
+  width: 300px;
+  height: 700px;
+  background-color: slategray; /* Darker background for the popup */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+  z-index: 1000;
+  color: #ffffff; /* Light text color */
+}
+
+.popup2 {
+  position: fixed;
+  bottom: 0%;
+  right: 0;
+  overflow: auto;
+  width: 1210px;
+  height: 250px;
+  background-color: lightseagreen; /* Darker background for the popup */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+  z-index: 1000;
+  color: #ffffff; /* Light text color */
+}
+
+.popup-content {
+  padding: 20px;
+  position: relative;
+  color: #ffffff; /* Ensure text inside the popup is white */
+}
+
+/* Close button style */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ffffff; /* White color for close button */
+}
+
+button {
+  background-color: dodgerblue; /* Darker button background */
+  color: #ffffff; /* White text */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto; /* Button width based on its content */
+  display: block; /* Ensures each button is on its own line */
+  margin-bottom: 15px; /* Adds space between buttons */
+  box-sizing: border-box; /* Ensures padding doesn't affect the width */
+  text-align: left; /* Align text inside the button to the left */
+}
+
+button:hover {
+  background-color: #666666; /* Lighter shade on hover */
+}
