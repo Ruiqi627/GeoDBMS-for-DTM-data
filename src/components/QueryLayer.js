@@ -5,7 +5,7 @@ import React, {
 import $ from 'jquery';
 import L from 'leaflet';
 import proj4 from 'proj4';
-
+//Load query result on map
 const QueryLayer = ({
 	map,
 	queryDate,

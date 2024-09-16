@@ -15,6 +15,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import chroma from 'chroma-js';
 import { AppContext } from '../context/AppContext';
 import QueryLayer from './QueryLayer';
+import WebLayer from './WebLayer';
 
 let map = null;
 let georaster;
@@ -99,7 +100,9 @@ const MapComponent = ({}) => {
     setWcsdraw,
     clearAnalysis,
     setClearAnalysis,
-    setExportfile
+    setExportfile,
+    clearTotalchange,setClearTotalchange,
+    totalchangeanalysisfile
 	} = useContext(AppContext);
 
 	const wmsLayerRef = useRef(null);
@@ -127,60 +130,66 @@ const MapComponent = ({}) => {
 		};
 	}, []);
 
-	useEffect(() => {
+useEffect(() => {
+  console.log(ALS_1, 'ALS_1的状态有没有变');
+  console.log(refreshKey, '有没有refresh');
 
-		if(layerAls1) {
-			map.removeLayer(layerAls1);
-			setLayerAls1(null); 
-		}
-		if(boundarylayer) {
+  // 先移除图层（如果已经存在）
+  if (layerAls1) {
+    map.removeLayer(layerAls1);
+    setLayerAls1(null); // 重置图层状态
+  }
+  if(boundarylayer) {
 			map.removeLayer(boundarylayer)
-		}
+	}
 
-		// 重新加载图层
-		if(ALS_1) {
-			const url = `http://localhost:3000/ALS_1`;
-			$.ajax({
-				url: url,
-				type: 'GET',
-				success: function(response) {
-					setAls_1data(response);
-					const geotiffFilePath = 'http://localhost:3000/static/' + 'als_1' + '.tiff';
-					fetch(geotiffFilePath)
-						.then(response => {
-							if(!response.ok) {
-								throw new Error('Network response was not ok');
-							}
-							return response.arrayBuffer();
-						})
-						.then(arrayBuffer => {
-							parseGeoraster(arrayBuffer)
-								.then(georaster => {
-									georaster.projection = 25832;
-									const newLayer = new GeoRasterLayer({
-										georaster: georaster,
-										opacity: 1,
-										resolution: 256,
-									});
-									newLayer.addTo(map);
-									map.fitBounds(newLayer.getBounds());
-									setLayerAls1(newLayer); 
-								})
-								.catch(error => {
-									console.error('Error parsing GeoRaster:', error);
-								});
-						})
-						.catch(error => {
-							console.error('Fetch error:', error);
-						});
-				},
-				error: function(error) {
-					console.log('error.', error);
-				}
-			});
-		}
+  // 重新加载图层
+  if (ALS_1) {
+    const url = `http://localhost:3000/ALS_1`;
+    $.ajax({
+      url: url,
+      type: 'GET',
+      success: function (response) {
+        console.log(response, '响应是啥');
+        setAls_1data(response);
 
-	}, [ALS_1, refreshKey]);
+        const geotiffFilePath = 'http://localhost:3000/static/' + 'als_1' + '.tiff';
+        fetch(geotiffFilePath)
+          .then(response => {
+            if (!response.ok) { 
+              throw new Error('Network response was not ok');
+            }
+            return response.arrayBuffer();
+          })
+          .then(arrayBuffer => {
+            parseGeoraster(arrayBuffer)
+              .then(georaster => {
+                georaster.projection = 25832;
+                const newLayer = new GeoRasterLayer({
+                  georaster: georaster,
+                  opacity: 1,
+                  resolution: 256,
+                });
+                newLayer.addTo(map);
+                map.fitBounds(newLayer.getBounds());
+                setLayerAls1(newLayer); // 设置新的图层状态
+              })
+              .catch(error => {
+                console.error('Error parsing GeoRaster:', error);
+              });
+          })
+          .catch(error => {
+            console.error('Fetch error:', error);
+          });
+      },
+      error: function (error) {
+        console.log('error.', error);
+      }
+    });
+  }
+
+  // 当 ALS_1 或 refreshKey 改变时触发
+}, [ALS_1, refreshKey]);
 
 	useEffect(() => {
 		if(boundarylayer) {
@@ -434,88 +443,126 @@ if(clearPoint === true) {
 			map.removeLayer(georasterlayer2);
 			setClearAnalysis(false);
 		}
-
-	}, [analysis, analysisALS1, analysisALS2,analysisfile,clearAnalysis]);
-
-	useEffect(() => {
-		if(clickListener1) {
-			map.off('click', clickListener1);
+		
+		if(clearTotalchange==true){
+			map.removeLayer(circle);
+			map.off('click', clickListener2);
+			map.removeLayer(georasterlayer);
+			setClearTotalchange(false);
 		}
 
-		if(campaignAnalysis === true) {
-			var url_to_geotiff_file = process.env.PUBLIC_URL + '/data/' + 'analysisresult123' + '.tif';
-			fetch(url_to_geotiff_file)
-				.then(response => response.arrayBuffer())
-				.then(arrayBuffer => {
-					parseGeoraster(arrayBuffer).then(parsedGeoraster => {
-						georaster = parsedGeoraster;
-						const min = georaster.mins[0];
-						const max = georaster.maxs[0];
-						const range = max - min;
+	}, [analysis, analysisALS1, analysisALS2,analysisfile,clearTotalchange]);
+	
+	
+	
 
+useEffect(() => {
+    if (clickListener1) {
+        map.off('click', clickListener1);
+    }
 
-						var scale = chroma.scale(['black', 'red', 'yellow'])
-							.domain([0, 12])
-							.classes(10);
+    if (campaignAnalysis === true) {
+    		if (georasterlayer) {
+      map.removeLayer(georasterlayer);
+    }
+        const url = `http://localhost:3000/totalchangeanalysis?totalchangeanalysisfile=${totalchangeanalysisfile}`;
+		console.log(url,'url')
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                console.log(response, 'response');
+                const raster1Path = response.paths.analysis1;
+                const raster2Path = response.paths.analysis2;
+                const raster3Path = response.paths.analysis3;
+                const output_path = 'E:/Totalchange.tiff';
 
-						georasterlayer = new GeoRasterLayer({
-							georaster: georaster,
-							opacity: 1,
-							pixelValuesToColorFn: function(pixelValues) {
-								var pixelValue = pixelValues[0]; 
-								var color = scale(pixelValue).hex();
+                const postData = {
+                    raster1_path: raster1Path,
+                    raster2_path: raster2Path,
+                    raster3_path: raster3Path,
+                    output_path: output_path
+                };
 
-								return color;
-							},
-							resolution: 256,
-							interactive: true
-						});
-						georasterlayer.addTo(map);
-						map.fitBounds(georasterlayer.getBounds());
+                $.ajax({
+                    url: 'http://localhost:5000/totalchange',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(postData),
+                    success: function(result) {
+                        var url_to_geotiff_file = 'http://localhost:3000/static/' + 'Totalchange' + '.tiff';
+                        fetch(url_to_geotiff_file)
+                            .then(response => response.arrayBuffer())
+                            .then(arrayBuffer => {
+                                parseGeoraster(arrayBuffer).then(parsedGeoraster => {
+                                    georaster = parsedGeoraster;
+                                    const min = georaster.mins[0];
+                                    const max = georaster.maxs[0];
+                                    const range = max - min;
 
-					});
+                                    var scale = chroma.scale(['black', 'red', 'yellow'])
+                                        .domain([0, 12])
+                                        .classes(10);
 
-					clickListener2 = function(e) {
-						if(circle) {
-							map.removeLayer(circle);
-						}
-						const latlng = e.latlng;
-						var coord = [e.latlng.lng, e.latlng.lat];
-						var transformlatlng = proj4('EPSG:4326', 'EPSG:25832', coord);
+                                    georasterlayer = new GeoRasterLayer({
+                                        georaster: georaster,
+                                        opacity: 1,
+                                        pixelValuesToColorFn: function(pixelValues) {
+                                            var pixelValue = pixelValues[0];
+                                            var color = scale(pixelValue).hex();
+                                            return color;
+                                        },
+                                        resolution: 256,
+                                        interactive: true
+                                    });
+                                    georasterlayer.addTo(map);
+                                    map.fitBounds(georasterlayer.getBounds());
+                                });
 
-						const x = Math.floor((transformlatlng[0] - georaster.xmin) / georaster.pixelWidth);
-						const y = Math.floor((georaster.ymax - transformlatlng[1]) / georaster.pixelHeight);
+                                clickListener2 = function(e) {
+                                    if (circle) {
+                                        map.removeLayer(circle);
+                                    }
+                                    const latlng = e.latlng;
+                                    var coord = [e.latlng.lng, e.latlng.lat];
+                                    var transformlatlng = proj4('EPSG:4326', 'EPSG:25832', coord);
 
-						let popupContent;
+                                    const x = Math.floor((transformlatlng[0] - georaster.xmin) / georaster.pixelWidth);
+                                    const y = Math.floor((georaster.ymax - transformlatlng[1]) / georaster.pixelHeight);
 
-						if(x >= 0 && x < georaster.width && y >= 0 && y < georaster.height) {
-							const pixelValue = georaster.values[0][y][x];
-							popupContent = `Here the degree of change is: ${pixelValue} m`;
-						} else {
-							popupContent = `No data at (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
-						}
+                                    let popupContent;
 
-						L.popup()
-							.setLatLng(latlng)
-							.setContent(popupContent)
-							.openOn(map);
+                                    if (x >= 0 && x < georaster.width && y >= 0 && y < georaster.height) {
+                                        const pixelValue = georaster.values[0][y][x];
+                                        popupContent = `Here the degree of change is: ${pixelValue} m`;
+                                    } else {
+                                        popupContent = `No data at (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`;
+                                    }
 
-						circle = L.circle(latlng, {
-							radius: 5, 
-							color: 'red', 
-							fillColor: '#f03', 
-							fillOpacity: 0.5 
-						}).addTo(map);
-					};
+                                    L.popup()
+                                        .setLatLng(latlng)
+                                        .setContent(popupContent)
+                                        .openOn(map);
 
-					map.on('click', clickListener2);
+                                    circle = L.circle(latlng, {
+                                        radius: 5,
+                                        color: 'red',
+                                        fillColor: '#f03',
+                                        fillOpacity: 0.5
+                                    }).addTo(map);
+                                };
 
-				})
-				.catch(error => {
-					console.error('Error loading GeoTIFF file:', error);
-				});
-		}
-	}, [campaignAnalysis]);
+                                map.on('click', clickListener2);
+                            })
+                            .catch(error => {
+                                console.error('Error loading GeoTIFF file:', error);
+                            });
+                    }
+                });
+            }
+        });
+    }
+}, [campaignAnalysis,totalchangeanalysisfile]);
 
 	useEffect(() => {
 		if(cleargeoraster == true) {
@@ -539,7 +586,6 @@ if(clearPoint === true) {
 	useEffect(() => {
 
 		if(exportfile == true) {
-			alert('1')
 			console.log(exportALS, exportname, format, exportresamplemethod, resamplesize, tilesize, savepath, 'elevationame')
 
 			const url = `http://localhost:3000/export?exportALS=${exportALS}&exportname=${exportname}&format=${format}&exportresamplemethod=${exportresamplemethod}&resamplesize=${resamplesize}&tilesize=${tilesize}&savepath=${savepath}`;
@@ -561,202 +607,6 @@ if(clearPoint === true) {
 		}
 
 	}, [exportfile, exportALS, exportname, format, exportresamplemethod, resamplesize, tilesize, savepath]);
-
-	useEffect(() => {
-		console.log(wmsfilename, 'wmsfilenamemap');
-
-		if(wmsfilename === '32457_5427.tif') {
-			if(clearWMS == true) {
-				setWmsfilename('');
-				if(wmsLayerRef.current) {
-					map.removeLayer(wmsLayerRef.current);
-					wmsLayerRef.current = null;
-				}
-				if(wmsLayer2Ref.current) {
-					map.removeLayer(wmsLayer2Ref.current);
-					wmsLayer2Ref.current = null;
-				}
-				if(wmsLayer3Ref.current) {
-					map.removeLayer(wmsLayer3Ref.current);
-					wmsLayer3Ref.current = null;
-				}
-			} else {
-				if(sliderValue == 1) {
-					wmsLayerRef.current = L.tileLayer.wms('http://localhost:8090/geoserver/wmstimeformal/wms?', {
-						layers: 'wmstimeformal:wmsformal',
-						format: 'image/png',
-						transparent: true,
-						version: '1.1.0',
-						time: '2000-01',
-						crs: L.CRS.EPSG4326
-					}).addTo(map);
-				} else if(sliderValue == 2) {
-					wmsLayer2Ref.current = L.tileLayer.wms('http://localhost:8090/geoserver/wmstimeformal/wms?', {
-						layers: 'wmstimeformal:wmsformal',
-						format: 'image/png',
-						transparent: true,
-						version: '1.1.0',
-						time: '2010-01',
-						crs: L.CRS.EPSG4326
-					}).addTo(map);
-				} else if(sliderValue == 3) {
-					wmsLayer3Ref.current = L.tileLayer.wms('http://localhost:8090/geoserver/wmstimeformal/wms?', {
-						layers: 'wmstimeformal:wmsformal',
-						format: 'image/png',
-						transparent: true,
-						version: '1.1.0',
-						time: '2020-01',
-						crs: L.CRS.EPSG4326
-					}).addTo(map);
-				}
-			}
-		}
-
-	}, [loadWMS, sliderValue, wmsfilename, clearWMS]);
-
-
-	//WCS
-	useEffect(() => {
-		if(wcsfilename == '32457_5427.tif') {
-			if(clearWCS == false) {
-				const url = `http://localhost:3000/query_wcsextent?wcsfilename=${wcsfilename}`;
-
-				$.ajax({
-					url: url,
-					type: 'GET',
-					success: function(response) {
-						const geojsonObject = JSON.parse(response[0].raster_extent_geojson);
-						const coordinates = geojsonObject.coordinates[0];
-						console.log(response, 'response')
-
-						for(let i = 0; i < coordinates.length; i++) {
-							const Geocoord = proj4('EPSG:25832', 'EPSG:4326', coordinates[i]);
-							coordinates[i] = Geocoord;
-						}
-
-						WCSLayer = L.geoJSON(geojsonObject).addTo(map);
-						map.fitBounds(WCSLayer.getBounds());
-					},
-					error: function(error) {
-						console.error(error);
-					}
-
-				})
-			} else {
-				if(circle) {
-					map.removeLayer(circle)
-				}
-				map.removeLayer(WCSLayer)
-				 if (drawControlwcs) {
-                map.removeControl(drawControlwcs);
-                drawControlwcs = null; 
-            map.off('draw:created', handleDrawCreated);
-            map.off('draw:drawstop', handleDrawStop);
-            }
-				setWcsdraw(false);
-				
-			}
-
-		}
-
-	}, [wcsfilename, clearWCS])
-
-useEffect(() => {
-    if (wcsdraw === true) {
-        var test;
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-        if (drawControlwcs) {
-            map.removeControl(drawControlwcs);
-        }
-
-        drawControlwcs = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems
-            },
-            draw: {
-                polygon: false,
-                polyline: false,
-                circle: false,
-                marker: false,
-                circlemarker: false,
-                rectangle: true
-            }
-        });
-
-        map.addControl(drawControlwcs);
-
-       handleDrawCreated = (e) => {
-            var layer = e.layer;
-            drawnItems.clearLayers(); 
-            drawnItems.addLayer(layer);
-
-            var coordinates = layer.toGeoJSON().geometry.coordinates[0];
-            var minLng = coordinates[0][0], maxLng = coordinates[0][0];
-            var minLat = coordinates[0][1], maxLat = coordinates[0][1];
-
-            for (var i = 0; i < coordinates.length; i++) {
-                var lng = coordinates[i][0];
-                var lat = coordinates[i][1];
-
-                if (lng < minLng) minLng = lng;
-                if (lng > maxLng) maxLng = lng;
-                if (lat < minLat) minLat = lat;
-                if (lat > maxLat) maxLat = lat;
-            }
-
-            var minCoord = [minLng, minLat];
-            var maxCoord = [maxLng, maxLat];
-            var otherCoord1 = [maxLng, minLat];
-            var otherCoord2 = [minLng, maxLat];
-
-            var minUtmCoord = proj4('EPSG:4326', 'EPSG:25832', minCoord);
-            var maxUtmCoord = proj4('EPSG:4326', 'EPSG:25832', maxCoord);
-            var otherUtmCoord1 = proj4('EPSG:4326', 'EPSG:25832', otherCoord1);
-            var otherUtmCoord2 = proj4('EPSG:4326', 'EPSG:25832', otherCoord2);
-
-            var wcsarray = [
-                [minUtmCoord[0], minUtmCoord[1]],
-                [maxUtmCoord[0], maxUtmCoord[1]],
-            ];
-
-            test = JSON.stringify(wcsarray);
-        };
-
-        handleDrawStop = () => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `http://localhost:3000/query_by_wcs?wcsarray=${test}`, true);
-            xhr.responseType = 'blob';
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    const blob = xhr.response;
-                    const url = URL.createObjectURL(blob);
-
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'wcsexport.tif';
-                    document.body.appendChild(a);
-                    a.click();
-                } else {
-                    console.error('Error downloading the file');
-                }
-            };
-
-            xhr.onerror = function () {
-                console.error('Network error');
-            };
-
-            xhr.send();
-            setWcsdraw(false);
-
-           
-        };
-
-        map.on('draw:created', handleDrawCreated);
-        map.on('draw:drawstop', handleDrawStop);
-    }
-}, [wcsdraw]);
 
 
 	useEffect(() => {
@@ -839,6 +689,18 @@ useEffect(() => {
       setPointQuery={setPointQuery}
       polygonQuery={polygonQuery}
       clearPolygon={clearPolygon}
+      />}
+      {map && <WebLayer 
+      map={map} 
+      wmsfilename={wmsfilename} 
+      setWmsfilename={setWmsfilename}
+      sliderValue={sliderValue} 
+      clearWMS={clearWMS} 
+      wcsfilename={wcsfilename}
+      clearWCS={clearWCS}
+      loadWMS={loadWMS}
+      wcsdraw={wcsdraw}
+      setWcsdraw={setWcsdraw}
       />}
     </div>
 	);
