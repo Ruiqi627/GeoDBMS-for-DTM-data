@@ -1,28 +1,28 @@
 import React from 'react';
-
+//the panel of Comparing the elevation changes between two campaigns
 const ElevationchangeComparison = ({
-    wcsalsname,
-    setWcsalsname,
-    wcsalsname2,
-    setWcsalsname2,
-    wcsfilename,
-    setWcsfilename,
-    FilenameOptions,
-    ALSnameOptions,
-    setAnalysis,
-    setClearWCS,
-    setCleargeoraster,
-    analysisALS1,
-    setAnalysisALS1,
-    setAnalysisALS2,
-    analysisALS2,
-    analysisfile,
-    setAnalysisfile,
-    setClearAnalysis
-    
+	wcsalsname,
+	setWcsalsname,
+	wcsalsname2,
+	setWcsalsname2,
+	wcsfilename,
+	setWcsfilename,
+	FilenameOptions,
+	ALSnameOptions,
+	setAnalysis,
+	setClearWCS,
+	setCleargeoraster,
+	analysisALS1,
+	setAnalysisALS1,
+	setAnalysisALS2,
+	analysisALS2,
+	analysisfile,
+	setAnalysisfile,
+	setClearAnalysis
+
 }) => {
-    return (
-        <div>
+	return(
+		<div>
             <h3>Elevation change analysis</h3>
 
             <p>Please choose the first ALS name</p>
@@ -60,7 +60,7 @@ const ElevationchangeComparison = ({
                 Clear
             </button>
         </div>
-    );
+	);
 };
 
 export default ElevationchangeComparison;

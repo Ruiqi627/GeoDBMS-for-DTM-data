@@ -1,29 +1,29 @@
 import React from 'react';
-
+//the panel of exporting DTM data
 const Export = ({
-    exportALS,
-    setExportALS,
-    exportname,
-    setExportname,
-    format,
-    setFormat,
-    exportresamplemethod,
-    setExportresamplemethod,
-    resamplesize,
-    setResamplesize,
-    tilesize,
-    setTilesize,
-    setSavepath,
-    setExportfile,
-    ALSnameOptions,
-    FilenameOptions,
-    ExportformatOptions,
-    ResamplemethodOptions,
-    ResamplesizeOptions,
-    ExporttileOptions
+	exportALS,
+	setExportALS,
+	exportname,
+	setExportname,
+	format,
+	setFormat,
+	exportresamplemethod,
+	setExportresamplemethod,
+	resamplesize,
+	setResamplesize,
+	tilesize,
+	setTilesize,
+	setSavepath,
+	setExportfile,
+	ALSnameOptions,
+	FilenameOptions,
+	ExportformatOptions,
+	ResamplemethodOptions,
+	ResamplesizeOptions,
+	ExporttileOptions
 }) => {
-    return (
-        <div>
+	return(
+		<div>
             <h3>Export</h3>
 
             <p>Please choose the ALS</p>
@@ -88,7 +88,7 @@ const Export = ({
 
             <button onClick={() => setExportfile(true)}>Export</button>
         </div>
-    );
+	);
 };
 
 export default Export;

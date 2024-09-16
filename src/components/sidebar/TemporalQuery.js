@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+//The temporal query panel
 const TemporalQuery = ({
     queryDate,
     setQueryDate,

@@ -1,19 +1,19 @@
 import React from 'react';
-
+//The panel of resampling DTM data
 const Resample = ({
-    resampleALS,
-    setResampleALS,
-    resamplefile,
-    setResamplefile,
-    FilenameOptions,
-    ALSnameOptions,
-    specificvalue,
-    setSpecificvalue,
-    ResamplespecificvalueOptions,
-    setClearResample
+	resampleALS,
+	setResampleALS,
+	resamplefile,
+	setResamplefile,
+	FilenameOptions,
+	ALSnameOptions,
+	specificvalue,
+	setSpecificvalue,
+	ResamplespecificvalueOptions,
+	setClearResample
 }) => {
-    return (
-        <div>
+	return(
+		<div>
             <h3>Specific value resampling</h3>
 
             <p>Please choose the ALS name</p>
@@ -45,7 +45,7 @@ const Resample = ({
 
             <button onClick={() => setClearResample(true)}>Clear</button>
         </div>
-    );
+	);
 };
 
 export default Resample;

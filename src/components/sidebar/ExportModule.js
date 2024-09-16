@@ -1,27 +1,29 @@
-import React, { useState, useContext } from 'react';
+import React, {
+	useState,
+	useContext
+} from 'react';
 import { AppContext } from '../../context/AppContext';
-
+//The export module
 const ExportModule = ({
-   setPopupType,setIsPopupVisible,setIsPopupVisible3
+	setPopupType,
+	setIsPopupVisible,
+	setIsPopupVisible3
 }) => {
-	    const loadExportComponent = () => {
-        setPopupType('export');
-        setIsPopupVisible3(true);
-    };
+	const loadExportComponent = () => {
+		setPopupType('export');
+		setIsPopupVisible3(true);
+	};
 
+	const loadResampleComponent = () => {
+		setPopupType('resample');
+		setIsPopupVisible(true);
+	};
+	const [isAModuleExpanded4, setIsAModuleExpanded4] = useState(false);
+	const toggleAModule4 = () => setIsAModuleExpanded4(!isAModuleExpanded4);
 
+	return(
 
-    const loadResampleComponent = () => {
-        setPopupType('resample');
-        setIsPopupVisible(true);
-    };
-     const [isAModuleExpanded4, setIsAModuleExpanded4] = useState(false);
-     const toggleAModule4 = () => setIsAModuleExpanded4(!isAModuleExpanded4);
-	
-	
-    return (
-
- <div className="module" >
+		<div className="module" >
                 <div className="module-header" onClick={toggleAModule4}>Export module</div>
                 {isAModuleExpanded4 && (
                     <div className="module-content">
@@ -32,7 +34,7 @@ const ExportModule = ({
                     </div>
                 )}
             </div>
-    );
+	);
 };
 
 export default ExportModule;

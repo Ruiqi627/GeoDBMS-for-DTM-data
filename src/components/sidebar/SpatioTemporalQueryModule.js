@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
-
+//Spatio-temporal query module
 const SpatioTemporalQueryModule = ({
    setPopupType,setIsPopupVisible
 }) => {

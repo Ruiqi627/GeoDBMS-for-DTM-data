@@ -3,7 +3,7 @@ import React, {
 	useEffect
 } from 'react';
 import $ from 'jquery';
-
+//The DTM data management panel
 const PopupContent2 = ({
 	als_1data,
 	setAls_1boundary,

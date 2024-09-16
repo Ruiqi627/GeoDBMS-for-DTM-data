@@ -1,5 +1,5 @@
 import React from 'react';
-
+//The panel of spatial query
 const SpatialQuery = ({
     pointQuery,
     setPointQuery,

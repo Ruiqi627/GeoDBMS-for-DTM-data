@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
-
+//Spatio-Temporal Analysis Module
 const SpatioTemporalAnalysisModule = ({
    setPopupType,setIsPopupVisible
 }) => {
@@ -25,8 +25,8 @@ const SpatioTemporalAnalysisModule = ({
                 {isAModuleExpanded3 && (
                     <div className="module-content">
                      <div className="sub-module">
-                        <button onClick={loadElevationChangeComponent}>Elevation change analysis</button>
-                        <button onClick={loadCampaignComponent}>Campaign analysis</button>
+                        <button onClick={loadElevationChangeComponent}>Elevation change comparison</button>
+                        <button onClick={loadCampaignComponent}>Total change</button>
                       </div>  
                     </div>
                 )}

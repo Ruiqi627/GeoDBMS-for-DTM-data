@@ -1,5 +1,5 @@
 import React from 'react';
-
+//WCS panel
 const WCS = ({
     wcsalsname,
     setWcsalsname,
@@ -38,7 +38,6 @@ const WCS = ({
             <button onClick={WCSdrawHandler}>Draw</button>
             <button onClick={() => {
                 setClearWCS(true);
-                setCleargeoraster(true);
             }}>
                 Clear
             </button>
@@ -47,4 +46,3 @@ const WCS = ({
 };
 
 export default WCS;
-

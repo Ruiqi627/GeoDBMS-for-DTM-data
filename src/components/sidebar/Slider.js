@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+//The slider is used for WMS
 function Slider({ sliderValue, setSliderValue }) {
   const [value, setValue] = useState(sliderValue);
 

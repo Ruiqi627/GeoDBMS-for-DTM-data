@@ -3,7 +3,7 @@ import React, {
 	useContext
 } from 'react';
 import { AppContext } from '../../context/AppContext';
-
+//The management module
 const ManagementModule = ({
 	isPopupVisible2,
 	setIsPopupVisible2,

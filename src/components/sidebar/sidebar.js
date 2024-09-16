@@ -116,6 +116,9 @@ const Sidebar = () => {
         setCleargeoraster2,
         
         setClearAnalysis,
+        setClearTotalchange,
+        totalchangeanalysisfile,
+        setTotalchangeanalysisfile
     } = useContext(AppContext);
 
 
@@ -270,10 +273,10 @@ const Sidebar = () => {
 			   
 			    {popupType === 'campaign' && (
                   <TotalchangeAnalysis
-                    wcsfilename={wcsfilename} setWcsfilename={setWcsfilename}
+                    totalchangeanalysisfile={totalchangeanalysisfile} setTotalchangeanalysisfile={setTotalchangeanalysisfile}
                     FilenameOptions={FilenameOptions}
                     setCampaignAnalysis={setCampaignAnalysis}
-                    setClearWCS={setClearWCS} setCleargeoraster2={setCleargeoraster2}
+                    setClearTotalchange={setClearTotalchange} setCleargeoraster2={setCleargeoraster2}
                 />
             )}
 			    
